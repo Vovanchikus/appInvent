@@ -1,31 +1,21 @@
 name: inventpro
-description: "A new Flutter project."
+description: InventPro Flutter app
 publish_to: "none"
-
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.10.0 <4.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  path: ^1.9.1
-  path_provider: ^2.0.15
   flutter:
     sdk: flutter
-
-  dio: ^5.9.0 # <-- рабочая версия
-  drift: ^2.8.0
-  drift_flutter: ^0.2.7
-  sqlite3_flutter_libs: ^0.5.41 # рабочая версия
-  connectivity_plus: ^4.0.2
-  cupertino_icons: ^1.0.8
+  http: ^1.1.0
+  drift: ^2.11.0
+  path_provider: ^2.0.17
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  drift_dev: ^2.8.0
-  build_runner: ^2.4.6
-  flutter_lints: ^6.0.0
-
-flutter:
-  uses-material-design: true
+  build_runner: ^2.4.0
+  drift_dev: ^2.11.0

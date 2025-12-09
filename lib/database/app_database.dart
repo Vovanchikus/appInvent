@@ -3,14 +3,12 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
-
 import '../models/product.dart';
 import '../models/document.dart';
 import '../models/operation.dart';
 
 part 'app_database.g.dart';
 
-// ---------------- TABLES ----------------
 class ProductsTable extends Table {
   IntColumn get id => integer()();
   TextColumn get name => text()();
@@ -42,7 +40,6 @@ class OperationsTable extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-// ---------------- DATABASE ----------------
 @DriftDatabase(tables: [ProductsTable, DocumentsTable, OperationsTable])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -50,7 +47,6 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
-  // --- Products
   Future<void> upsertProducts(List<Product> items) async {
     for (var p in items) {
       into(productsTable).insertOnConflictUpdate(
@@ -65,7 +61,6 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
-  // --- Documents
   Future<void> upsertDocuments(List<InvDocument> items) async {
     for (var d in items) {
       into(documentsTable).insertOnConflictUpdate(
@@ -80,7 +75,6 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
-  // --- Operations
   Future<void> upsertOperations(List<OperationItem> items) async {
     for (var o in items) {
       into(operationsTable).insertOnConflictUpdate(
@@ -94,7 +88,6 @@ class AppDatabase extends _$AppDatabase {
   }
 }
 
-// ---------------- CONNECTION ----------------
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();

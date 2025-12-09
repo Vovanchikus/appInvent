@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'api/api_service.dart';
 import 'database/app_database.dart';
-import 'services/sync_service.dart';
-import 'screens/home_page.dart';
+import 'pages/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final db = AppDatabase();
-  final api = ApiService(); // твой сервис API
+  final api = ApiService();
 
   runApp(MyApp(api: api, db: db));
 }
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   final ApiService api;
   final AppDatabase db;
 
-  const MyApp({super.key, required this.api, required this.db});
+  MyApp({required this.api, required this.db});
 
   @override
   Widget build(BuildContext context) {

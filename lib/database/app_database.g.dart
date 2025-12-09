@@ -30,6 +30,16 @@ class $ProductsTableTable extends ProductsTable
   late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
       'quantity', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _priceMeta = const VerificationMeta('price');
+  @override
+  late final GeneratedColumn<double> price = GeneratedColumn<double>(
+      'price', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _sumMeta = const VerificationMeta('sum');
+  @override
+  late final GeneratedColumn<double> sum = GeneratedColumn<double>(
+      'sum', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -37,7 +47,8 @@ class $ProductsTableTable extends ProductsTable
       'created_at', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  List<GeneratedColumn> get $columns => [id, name, unit, quantity, createdAt];
+  List<GeneratedColumn> get $columns =>
+      [id, name, unit, quantity, price, sum, createdAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -65,6 +76,14 @@ class $ProductsTableTable extends ProductsTable
       context.handle(_quantityMeta,
           quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta));
     }
+    if (data.containsKey('price')) {
+      context.handle(
+          _priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
+    }
+    if (data.containsKey('sum')) {
+      context.handle(
+          _sumMeta, sum.isAcceptableOrUnknown(data['sum']!, _sumMeta));
+    }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -86,6 +105,10 @@ class $ProductsTableTable extends ProductsTable
           .read(DriftSqlType.string, data['${effectivePrefix}unit']),
       quantity: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}quantity']),
+      price: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}price']),
+      sum: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}sum']),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at']),
     );
@@ -103,12 +126,16 @@ class ProductsTableData extends DataClass
   final String name;
   final String? unit;
   final int? quantity;
+  final double? price;
+  final double? sum;
   final String? createdAt;
   const ProductsTableData(
       {required this.id,
       required this.name,
       this.unit,
       this.quantity,
+      this.price,
+      this.sum,
       this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -120,6 +147,12 @@ class ProductsTableData extends DataClass
     }
     if (!nullToAbsent || quantity != null) {
       map['quantity'] = Variable<int>(quantity);
+    }
+    if (!nullToAbsent || price != null) {
+      map['price'] = Variable<double>(price);
+    }
+    if (!nullToAbsent || sum != null) {
+      map['sum'] = Variable<double>(sum);
     }
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<String>(createdAt);
@@ -135,6 +168,9 @@ class ProductsTableData extends DataClass
       quantity: quantity == null && nullToAbsent
           ? const Value.absent()
           : Value(quantity),
+      price:
+          price == null && nullToAbsent ? const Value.absent() : Value(price),
+      sum: sum == null && nullToAbsent ? const Value.absent() : Value(sum),
       createdAt: createdAt == null && nullToAbsent
           ? const Value.absent()
           : Value(createdAt),
@@ -149,6 +185,8 @@ class ProductsTableData extends DataClass
       name: serializer.fromJson<String>(json['name']),
       unit: serializer.fromJson<String?>(json['unit']),
       quantity: serializer.fromJson<int?>(json['quantity']),
+      price: serializer.fromJson<double?>(json['price']),
+      sum: serializer.fromJson<double?>(json['sum']),
       createdAt: serializer.fromJson<String?>(json['createdAt']),
     );
   }
@@ -160,6 +198,8 @@ class ProductsTableData extends DataClass
       'name': serializer.toJson<String>(name),
       'unit': serializer.toJson<String?>(unit),
       'quantity': serializer.toJson<int?>(quantity),
+      'price': serializer.toJson<double?>(price),
+      'sum': serializer.toJson<double?>(sum),
       'createdAt': serializer.toJson<String?>(createdAt),
     };
   }
@@ -169,12 +209,16 @@ class ProductsTableData extends DataClass
           String? name,
           Value<String?> unit = const Value.absent(),
           Value<int?> quantity = const Value.absent(),
+          Value<double?> price = const Value.absent(),
+          Value<double?> sum = const Value.absent(),
           Value<String?> createdAt = const Value.absent()}) =>
       ProductsTableData(
         id: id ?? this.id,
         name: name ?? this.name,
         unit: unit.present ? unit.value : this.unit,
         quantity: quantity.present ? quantity.value : this.quantity,
+        price: price.present ? price.value : this.price,
+        sum: sum.present ? sum.value : this.sum,
         createdAt: createdAt.present ? createdAt.value : this.createdAt,
       );
   ProductsTableData copyWithCompanion(ProductsTableCompanion data) {
@@ -183,6 +227,8 @@ class ProductsTableData extends DataClass
       name: data.name.present ? data.name.value : this.name,
       unit: data.unit.present ? data.unit.value : this.unit,
       quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      price: data.price.present ? data.price.value : this.price,
+      sum: data.sum.present ? data.sum.value : this.sum,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -194,13 +240,16 @@ class ProductsTableData extends DataClass
           ..write('name: $name, ')
           ..write('unit: $unit, ')
           ..write('quantity: $quantity, ')
+          ..write('price: $price, ')
+          ..write('sum: $sum, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, unit, quantity, createdAt);
+  int get hashCode =>
+      Object.hash(id, name, unit, quantity, price, sum, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -209,6 +258,8 @@ class ProductsTableData extends DataClass
           other.name == this.name &&
           other.unit == this.unit &&
           other.quantity == this.quantity &&
+          other.price == this.price &&
+          other.sum == this.sum &&
           other.createdAt == this.createdAt);
 }
 
@@ -217,12 +268,16 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
   final Value<String> name;
   final Value<String?> unit;
   final Value<int?> quantity;
+  final Value<double?> price;
+  final Value<double?> sum;
   final Value<String?> createdAt;
   const ProductsTableCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.unit = const Value.absent(),
     this.quantity = const Value.absent(),
+    this.price = const Value.absent(),
+    this.sum = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   ProductsTableCompanion.insert({
@@ -230,6 +285,8 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
     required String name,
     this.unit = const Value.absent(),
     this.quantity = const Value.absent(),
+    this.price = const Value.absent(),
+    this.sum = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : name = Value(name);
   static Insertable<ProductsTableData> custom({
@@ -237,6 +294,8 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
     Expression<String>? name,
     Expression<String>? unit,
     Expression<int>? quantity,
+    Expression<double>? price,
+    Expression<double>? sum,
     Expression<String>? createdAt,
   }) {
     return RawValuesInsertable({
@@ -244,6 +303,8 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
       if (name != null) 'name': name,
       if (unit != null) 'unit': unit,
       if (quantity != null) 'quantity': quantity,
+      if (price != null) 'price': price,
+      if (sum != null) 'sum': sum,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -253,12 +314,16 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
       Value<String>? name,
       Value<String?>? unit,
       Value<int?>? quantity,
+      Value<double?>? price,
+      Value<double?>? sum,
       Value<String?>? createdAt}) {
     return ProductsTableCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       unit: unit ?? this.unit,
       quantity: quantity ?? this.quantity,
+      price: price ?? this.price,
+      sum: sum ?? this.sum,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -278,6 +343,12 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
     if (quantity.present) {
       map['quantity'] = Variable<int>(quantity.value);
     }
+    if (price.present) {
+      map['price'] = Variable<double>(price.value);
+    }
+    if (sum.present) {
+      map['sum'] = Variable<double>(sum.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<String>(createdAt.value);
     }
@@ -291,6 +362,8 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
           ..write('name: $name, ')
           ..write('unit: $unit, ')
           ..write('quantity: $quantity, ')
+          ..write('price: $price, ')
+          ..write('sum: $sum, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -833,6 +906,8 @@ typedef $$ProductsTableTableCreateCompanionBuilder = ProductsTableCompanion
   required String name,
   Value<String?> unit,
   Value<int?> quantity,
+  Value<double?> price,
+  Value<double?> sum,
   Value<String?> createdAt,
 });
 typedef $$ProductsTableTableUpdateCompanionBuilder = ProductsTableCompanion
@@ -841,6 +916,8 @@ typedef $$ProductsTableTableUpdateCompanionBuilder = ProductsTableCompanion
   Value<String> name,
   Value<String?> unit,
   Value<int?> quantity,
+  Value<double?> price,
+  Value<double?> sum,
   Value<String?> createdAt,
 });
 
@@ -864,6 +941,12 @@ class $$ProductsTableTableFilterComposer
 
   ColumnFilters<int> get quantity => $composableBuilder(
       column: $table.quantity, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get price => $composableBuilder(
+      column: $table.price, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get sum => $composableBuilder(
+      column: $table.sum, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
@@ -890,6 +973,12 @@ class $$ProductsTableTableOrderingComposer
   ColumnOrderings<int> get quantity => $composableBuilder(
       column: $table.quantity, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<double> get price => $composableBuilder(
+      column: $table.price, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get sum => $composableBuilder(
+      column: $table.sum, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 }
@@ -914,6 +1003,12 @@ class $$ProductsTableTableAnnotationComposer
 
   GeneratedColumn<int> get quantity =>
       $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumn<double> get price =>
+      $composableBuilder(column: $table.price, builder: (column) => column);
+
+  GeneratedColumn<double> get sum =>
+      $composableBuilder(column: $table.sum, builder: (column) => column);
 
   GeneratedColumn<String> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -949,6 +1044,8 @@ class $$ProductsTableTableTableManager extends RootTableManager<
             Value<String> name = const Value.absent(),
             Value<String?> unit = const Value.absent(),
             Value<int?> quantity = const Value.absent(),
+            Value<double?> price = const Value.absent(),
+            Value<double?> sum = const Value.absent(),
             Value<String?> createdAt = const Value.absent(),
           }) =>
               ProductsTableCompanion(
@@ -956,6 +1053,8 @@ class $$ProductsTableTableTableManager extends RootTableManager<
             name: name,
             unit: unit,
             quantity: quantity,
+            price: price,
+            sum: sum,
             createdAt: createdAt,
           ),
           createCompanionCallback: ({
@@ -963,6 +1062,8 @@ class $$ProductsTableTableTableManager extends RootTableManager<
             required String name,
             Value<String?> unit = const Value.absent(),
             Value<int?> quantity = const Value.absent(),
+            Value<double?> price = const Value.absent(),
+            Value<double?> sum = const Value.absent(),
             Value<String?> createdAt = const Value.absent(),
           }) =>
               ProductsTableCompanion.insert(
@@ -970,6 +1071,8 @@ class $$ProductsTableTableTableManager extends RootTableManager<
             name: name,
             unit: unit,
             quantity: quantity,
+            price: price,
+            sum: sum,
             createdAt: createdAt,
           ),
           withReferenceMapper: (p0) => p0

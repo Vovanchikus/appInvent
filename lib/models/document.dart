@@ -12,4 +12,14 @@ class InvDocument {
     this.fileName,
     this.createdAt,
   });
+
+  factory InvDocument.fromJson(Map<String, dynamic> json) {
+    return InvDocument(
+      id: json['id'],
+      name: json['name'],
+      fileUrl: json['fileUrl'],
+      fileName: json['fileName'],
+      createdAt: json['createdAt'],
+    );
+  }
 }

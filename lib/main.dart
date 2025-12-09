@@ -5,6 +5,7 @@ import 'api/api_service.dart';
 import 'database/app_database.dart';
 import 'pages/home_page.dart';
 import 'services/sync_service.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'InventPro',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: AppTheme.light,
       home: HomePage(api: api, db: db, syncService: syncService),
     );
   }
